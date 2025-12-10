@@ -17,19 +17,44 @@ export async function POST(request: Request) {
     - One short verse (3-4 lines)
     - One catchy chorus/hook (4-5 lines)
     
-    Keep it creative, emotional, and punchy. Return only the lyrics in this format:
-    [Verse]
-    (3-4 lines here)
+    Also, suggest the best voice from this list that matches the genre and song style:
+    Zephyr (Bright), Puck (Upbeat), Charon (Informative), Kore (Firm), Fenrir (Excitable), Leda (Youthful), 
+    Orus (Firm), Aoede (Breezy), Callirrhoe (Easy-going), Autonoe (Bright), Enceladus (Breathy), Iapetus (Clear), 
+    Umbriel (Easy-going), Algieba (Smooth), Despina (Smooth), Erinome (Clear), Algenib (Gravelly), Rasalgethi (Informative), 
+    Laomedeia (Upbeat), Achernar (Soft), Alnilam (Firm), Schedar (Even), Gacrux (Mature), Pulcherrima (Forward), 
+    Achird (Friendly), Zubenelgenubi (Casual), Vindematrix (Gentle), Sadachbia (Lively), Sadaltager (Knowledgeable), Sulafat (Warm)
     
-    [Chorus]
-    (4-5 lines here)`;
+    Return in this EXACT JSON format:
+    {
+      "lyrics": "[Verse]\\n(lyrics here)\\n\\n[Chorus]\\n(lyrics here)",
+      "voiceName": "VoiceName"
+    }`;
 
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash",
       contents: prompt,
     });
 
-    return NextResponse.json({ lyrics: response.text });
+    const responseText = (response.text || "").trim();
+    
+    // Try to parse JSON from the response
+    let parsedResponse;
+    try {
+      // Remove markdown code blocks if present
+      const jsonText = responseText.replace(/```json\n?|\n?```/g, '').trim();
+      parsedResponse = JSON.parse(jsonText);
+    } catch (e) {
+      // If parsing fails, return just the text as lyrics with default voice
+      return NextResponse.json({ 
+        lyrics: responseText,
+        voiceName: "Puck"
+      });
+    }
+
+    return NextResponse.json({ 
+      lyrics: parsedResponse.lyrics,
+      voiceName: parsedResponse.voiceName || "Puck"
+    });
   } catch (error: any) {
     console.error("Error generating lyrics:", error);
     return NextResponse.json(

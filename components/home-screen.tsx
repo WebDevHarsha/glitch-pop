@@ -22,6 +22,7 @@ export function HomeScreen({ onGenerate }: HomeScreenProps) {
   const [isGeneratingLyrics, setIsGeneratingLyrics] = useState(false)
   const [isGeneratingAudio, setIsGeneratingAudio] = useState(false)
   const [audioUrl, setAudioUrl] = useState("")
+  const [voiceName, setVoiceName] = useState("Puck")
 
   const handleGenerateRandomLyrics = async () => {
     if (!description.trim()) {
@@ -46,6 +47,9 @@ export function HomeScreen({ onGenerate }: HomeScreenProps) {
 
       if (response.ok) {
         setLyrics(data.lyrics)
+        if (data.voiceName) {
+          setVoiceName(data.voiceName)
+        }
       } else {
         alert("Failed to generate lyrics: " + (data.error || "Unknown error"))
       }
@@ -73,6 +77,7 @@ export function HomeScreen({ onGenerate }: HomeScreenProps) {
         body: JSON.stringify({
           lyrics: lyrics,
           genre: genre,
+          voiceName: voiceName,
         }),
       })
 
@@ -183,9 +188,9 @@ export function HomeScreen({ onGenerate }: HomeScreenProps) {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent className="border-3 border-black">
-                      <SelectItem value="Short">Short (~2 min)</SelectItem>
-                      <SelectItem value="Medium">Medium (~3 min)</SelectItem>
-                      <SelectItem value="Long">Long (~4 min)</SelectItem>
+                      <SelectItem value="Short">Short (~30 sec)</SelectItem>
+                      <SelectItem value="Medium">Medium (~1 min)</SelectItem>
+                      <SelectItem value="Long">Long (~2 min)</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>

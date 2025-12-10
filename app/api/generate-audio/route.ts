@@ -31,7 +31,7 @@ async function saveWaveFile(
 
 export async function POST(request: Request) {
   try {
-    const { lyrics, genre } = await request.json();
+    const { lyrics, genre, voiceName } = await request.json();
 
     if (!lyrics) {
       return NextResponse.json(
@@ -39,6 +39,9 @@ export async function POST(request: Request) {
         { status: 400 }
       );
     }
+
+    // Use the provided voice name or default to Puck
+    const selectedVoice = voiceName || "Puck";
 
     // Generate singing audio using Gemini TTS
     const response = await ai.models.generateContent({
@@ -56,7 +59,7 @@ export async function POST(request: Request) {
         responseModalities: ["AUDIO"],
         speechConfig: {
           voiceConfig: {
-            prebuiltVoiceConfig: { voiceName: "Kore" },
+            prebuiltVoiceConfig: { voiceName: selectedVoice },
           },
         },
       },
@@ -75,7 +78,7 @@ export async function POST(request: Request) {
 
     // Generate unique filename
     const timestamp = Date.now();
-    const fileName = `song-${timestamp}.wav`;
+    const fileName = `song-audio.wav`;
     const filePath = path.join(process.cwd(), "public", "generated", fileName);
 
     // Ensure directory exists
