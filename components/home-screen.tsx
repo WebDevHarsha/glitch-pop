@@ -16,7 +16,7 @@ interface HomeScreenProps {
 
 export function HomeScreen({ onGenerate }: HomeScreenProps) {
   const [description, setDescription] = useState("")
-  const [genre, setGenre] = useState("Pop")
+  const [genre, setGenre] = useState("")
   const [length, setLength] = useState("Medium")
   const [lyrics, setLyrics] = useState("")
 
@@ -58,7 +58,7 @@ export function HomeScreen({ onGenerate }: HomeScreenProps) {
                   placeholder="A summer anthem about freedom and adventure..."
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  className="bg-gray-100 border-3 border-black focus:border-black focus:ring-0 text-base py-5 font-mono"
+                  className="bg-gray-100 border-3 border-black focus:border-black focus:ring-0 text-base py-5 font-mono text-black"
                   required
                 />
               </div>
@@ -68,21 +68,13 @@ export function HomeScreen({ onGenerate }: HomeScreenProps) {
                   <Label htmlFor="genre" className="text-black font-bold text-base mb-2 block uppercase tracking-wide">
                     Genre
                   </Label>
-                  <Select value={genre} onValueChange={setGenre}>
-                    <SelectTrigger
-                      id="genre"
-                      className="bg-gray-100 border-3 border-black focus:border-black focus:ring-0 font-mono h-11"
-                    >
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent className="border-3 border-black">
-                      <SelectItem value="Pop">Pop</SelectItem>
-                      <SelectItem value="EDM">EDM</SelectItem>
-                      <SelectItem value="Lo-fi">Lo-fi</SelectItem>
-                      <SelectItem value="Hip-Hop">Hip-Hop</SelectItem>
-                      <SelectItem value="Acoustic">Acoustic</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <Input
+                    id="genre"
+                    placeholder="Pop, EDM, Hip-Hop..."
+                    value={genre}
+                    onChange={(e) => setGenre(e.target.value)}
+                    className="bg-gray-100 border-3 border-black focus:border-black focus:ring-0 text-base h-11 font-mono text-black"
+                  />
                 </div>
 
                 <div>
@@ -92,7 +84,7 @@ export function HomeScreen({ onGenerate }: HomeScreenProps) {
                   <Select value={length} onValueChange={setLength}>
                     <SelectTrigger
                       id="length"
-                      className="bg-gray-100 border-3 border-black focus:border-black focus:ring-0 font-mono h-11"
+                      className="bg-gray-100 border-3 border-black focus:border-black focus:ring-0 font-mono h-11 text-black"
                     >
                       <SelectValue />
                     </SelectTrigger>
@@ -114,7 +106,7 @@ export function HomeScreen({ onGenerate }: HomeScreenProps) {
                   placeholder="Drop your bars here or let AI cook..."
                   value={lyrics}
                   onChange={(e) => setLyrics(e.target.value)}
-                  className="bg-gray-100 border-3 border-black focus:border-black focus:ring-0 resize-none font-mono text-base"
+                  className="bg-gray-100 border-3 border-black focus:border-black focus:ring-0 resize-none font-mono text-base text-black"
                   rows={3}
                 />
               </div>
