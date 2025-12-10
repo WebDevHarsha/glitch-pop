@@ -20,6 +20,8 @@ export function HomeScreen({ onGenerate }: HomeScreenProps) {
   const [length, setLength] = useState("Medium")
   const [lyrics, setLyrics] = useState("")
   const [isGeneratingLyrics, setIsGeneratingLyrics] = useState(false)
+  const [isGeneratingAudio, setIsGeneratingAudio] = useState(false)
+  const [audioUrl, setAudioUrl] = useState("")
 
   const handleGenerateRandomLyrics = async () => {
     if (!description.trim()) {
@@ -55,10 +57,67 @@ export function HomeScreen({ onGenerate }: HomeScreenProps) {
     }
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleGenerateAudio = async () => {
+    if (!lyrics.trim()) {
+      alert("Please generate or write lyrics first!")
+      return
+    }
+
+    setIsGeneratingAudio(true)
+    try {
+      const response = await fetch("/api/generate-audio", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          lyrics: lyrics,
+          genre: genre,
+        }),
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        setAudioUrl(data.audioUrl)
+      } else {
+        alert("Failed to generate audio: " + (data.error || "Unknown error"))
+      }
+    } catch (error) {
+      console.error("Error:", error)
+      alert("Failed to generate audio. Please try again.")
+    } finally {
+      setIsGeneratingAudio(false)
+    }
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (description.trim()) {
-      onGenerate(description, genre, "", length)
+    if (!description.trim()) {
+      return
+    }
+
+    setIsGeneratingAudio(true)
+    try {
+      const response = await fetch("/api/mix-audio", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        setAudioUrl(data.audioUrl)
+      } else {
+        alert("Failed to mix audio: " + (data.error || "Unknown error"))
+      }
+    } catch (error) {
+      console.error("Error:", error)
+      alert("Failed to mix audio. Please try again.")
+    } finally {
+      setIsGeneratingAudio(false)
     }
   }
 
@@ -159,14 +218,38 @@ export function HomeScreen({ onGenerate }: HomeScreenProps) {
             </div>
           </div>
 
-          <Button
-            type="submit"
-            className="w-full bg-black hover:bg-gray-900 text-white border-4 border-black text-xl py-6 font-black uppercase tracking-wider transform hover:rotate-1 transition-all shadow-[6px_6px_0px_0px_rgba(239,68,68,1)] hover:shadow-[8px_8px_0px_0px_rgba(239,68,68,1)] disabled:opacity-50 disabled:cursor-not-allowed"
-            disabled={!description.trim()}
-          >
-            <Zap className="mr-2 h-6 w-6" />
-            Generate Song
-          </Button>
+          {/* Audio Preview Section */}
+          {audioUrl && (
+            <div className="bg-white border-4 border-black p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+              <div className="bg-black text-white inline-block px-4 py-2 mb-4 font-black text-lg border-3 border-black transform rotate-1">
+                YOUR SONG
+              </div>
+              <audio controls className="w-full" src={audioUrl}>
+                Your browser does not support the audio element.
+              </audio>
+            </div>
+          )}
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <Button
+              type="button"
+              onClick={handleGenerateAudio}
+              disabled={!lyrics.trim() || isGeneratingAudio}
+              className="bg-red-600 hover:bg-red-700 text-white border-4 border-black text-xl py-6 font-black uppercase tracking-wider transform hover:-rotate-1 transition-all shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <Sparkles className="mr-2 h-6 w-6" />
+              {isGeneratingAudio ? "Singing..." : "Generate Vocals"}
+            </Button>
+
+            <Button
+              type="submit"
+              className="bg-black hover:bg-gray-900 text-white border-4 border-black text-xl py-6 font-black uppercase tracking-wider transform hover:rotate-1 transition-all shadow-[6px_6px_0px_0px_rgba(239,68,68,1)] hover:shadow-[8px_8px_0px_0px_rgba(239,68,68,1)] disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={isGeneratingAudio}
+            >
+              <Zap className="mr-2 h-6 w-6" />
+              {isGeneratingAudio ? "Mixing..." : "Mix Song"}
+            </Button>
+          </div>
         </form>
       </div>
     </div>
