@@ -2,40 +2,50 @@
 
 export function LoadingScreen() {
   return (
-    <div className="relative z-10 flex items-center justify-center min-h-screen p-4">
+    <div className="relative z-10 flex items-center justify-center h-screen p-4">
       <div className="text-center space-y-8">
-        {/* Animated loader */}
-        <div className="relative w-32 h-32 mx-auto">
-          {/* Outer ring */}
-          <div className="absolute inset-0 rounded-full border-4 border-primary/20" />
-
-          {/* Spinning ring */}
-          <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-primary border-r-secondary animate-spin" />
-
-          {/* Inner ring */}
-          <div className="absolute inset-4 rounded-full border-4 border-accent/20" />
-
-          {/* Inner spinning ring */}
-          <div
-            className="absolute inset-4 rounded-full border-4 border-transparent border-b-accent animate-spin"
-            style={{ animationDirection: "reverse", animationDuration: "1s" }}
+        {/* Rotating boxes loader */}
+        <div className="relative w-40 h-40 mx-auto">
+          {/* Red box */}
+          <div className="absolute inset-0 bg-red-600 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] animate-spin" 
+               style={{ animationDuration: '2s' }}
           />
-
-          {/* Center pulse */}
-          <div className="absolute inset-8 rounded-full bg-accent opacity-50 blur-md animate-pulse" />
+          
+          {/* Yellow box */}
+          <div className="absolute inset-6 bg-yellow-400 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] animate-spin" 
+               style={{ animationDuration: '1.5s', animationDirection: 'reverse' }}
+          />
+          
+          {/* Black center */}
+          <div className="absolute inset-12 bg-black flex items-center justify-center">
+            <div className="w-4 h-4 bg-white animate-pulse" />
+          </div>
         </div>
 
         {/* Loading text */}
-        <div className="space-y-2">
-          <h2 className="text-3xl md:text-4xl font-bold text-primary animate-pulse">Mixing your beat...</h2>
-          <p className="text-muted-foreground">Crafting the perfect sound</p>
+        <div className="space-y-3">
+          <div className="flex items-center justify-center gap-2">
+            <div className="bg-red-600 text-white px-4 py-2 font-black text-2xl transform -rotate-1 border-3 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+              MIXING
+            </div>
+            <div className="bg-yellow-400 text-black px-4 py-2 font-black text-2xl transform rotate-1 border-3 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+              BEATS
+            </div>
+          </div>
+          <p className="text-gray-700 font-mono text-sm">Cooking up something fresh...</p>
         </div>
 
-        {/* Progress indicators */}
-        <div className="flex justify-center gap-2">
-          <div className="w-2 h-2 rounded-full bg-primary animate-bounce" style={{ animationDelay: "0ms" }} />
-          <div className="w-2 h-2 rounded-full bg-secondary animate-bounce" style={{ animationDelay: "150ms" }} />
-          <div className="w-2 h-2 rounded-full bg-accent animate-bounce" style={{ animationDelay: "300ms" }} />
+        {/* Progress bars */}
+        <div className="space-y-2 max-w-xs mx-auto">
+          <div className="h-3 bg-white border-3 border-black overflow-hidden">
+            <div className="h-full bg-red-600 animate-pulse" style={{ width: '60%' }} />
+          </div>
+          <div className="h-3 bg-white border-3 border-black overflow-hidden">
+            <div className="h-full bg-yellow-400 animate-pulse" style={{ width: '40%', animationDelay: '0.3s' }} />
+          </div>
+          <div className="h-3 bg-white border-3 border-black overflow-hidden">
+            <div className="h-full bg-black animate-pulse" style={{ width: '80%', animationDelay: '0.6s' }} />
+          </div>
         </div>
       </div>
     </div>

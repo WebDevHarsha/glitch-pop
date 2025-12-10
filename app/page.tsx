@@ -39,11 +39,17 @@ export default function Page() {
   }
 
   return (
-    <main className="min-h-screen bg-background relative overflow-hidden">
-      {/* Background gradient effects */}
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-secondary/10 pointer-events-none" />
-      <div className="absolute top-0 left-1/4 w-96 h-96 bg-accent/5 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
+    <main className="min-h-screen bg-gray-50 relative overflow-hidden">
+      {/* Retro grid pattern background */}
+      <div className="absolute inset-0 opacity-5 pointer-events-none" 
+           style={{
+             backgroundImage: `
+               linear-gradient(to right, black 1px, transparent 1px),
+               linear-gradient(to bottom, black 1px, transparent 1px)
+             `,
+             backgroundSize: '40px 40px'
+           }}
+      />
 
       {screen === "home" && <HomeScreen onGenerate={handleGenerate} />}
       {screen === "loading" && <LoadingScreen />}
