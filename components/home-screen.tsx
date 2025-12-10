@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
-import { Zap } from "lucide-react"
+import { Zap, Sparkles } from "lucide-react"
 
 interface HomeScreenProps {
   onGenerate: (description: string, genre: string, mood: string, length: string) => void
@@ -19,6 +19,41 @@ export function HomeScreen({ onGenerate }: HomeScreenProps) {
   const [genre, setGenre] = useState("")
   const [length, setLength] = useState("Medium")
   const [lyrics, setLyrics] = useState("")
+  const [isGeneratingLyrics, setIsGeneratingLyrics] = useState(false)
+
+  const handleGenerateRandomLyrics = async () => {
+    if (!description.trim()) {
+      alert("Please describe your vibe first!")
+      return
+    }
+
+    setIsGeneratingLyrics(true)
+    try {
+      const response = await fetch("/api/generate-lyrics", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          description: description,
+          genre: genre,
+        }),
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        setLyrics(data.lyrics)
+      } else {
+        alert("Failed to generate lyrics: " + (data.error || "Unknown error"))
+      }
+    } catch (error) {
+      console.error("Error:", error)
+      alert("Failed to generate lyrics. Please try again.")
+    } finally {
+      setIsGeneratingLyrics(false)
+    }
+  }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -28,8 +63,8 @@ export function HomeScreen({ onGenerate }: HomeScreenProps) {
   }
 
   return (
-    <div className="relative z-10 flex items-center justify-center h-screen p-6 overflow-hidden">
-      <div className="w-full max-w-2xl">
+    <div className="relative z-10 flex items-center justify-center min-h-screen p-6 overflow-y-auto">
+      <div className="w-full max-w-2xl py-8">
         {/* Title with bold tilted boxes */}
         <div className="mb-8 flex items-center justify-center gap-3 flex-wrap">
           <div className="bg-red-600 text-white px-6 py-3 font-black text-4xl md:text-5xl transform -rotate-2 border-4 border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
@@ -98,9 +133,20 @@ export function HomeScreen({ onGenerate }: HomeScreenProps) {
               </div>
 
               <div>
-                <Label htmlFor="lyrics" className="text-black font-bold text-base mb-2 block uppercase tracking-wide">
-                  Lyrics <span className="text-gray-600 text-sm normal-case">(optional)</span>
-                </Label>
+                <div className="flex items-center justify-between mb-2">
+                  <Label htmlFor="lyrics" className="text-black font-bold text-base uppercase tracking-wide">
+                    Lyrics <span className="text-gray-600 text-sm normal-case">(optional)</span>
+                  </Label>
+                  <Button
+                    type="button"
+                    onClick={handleGenerateRandomLyrics}
+                    disabled={!description.trim() || isGeneratingLyrics}
+                    className="bg-yellow-400 hover:bg-yellow-500 text-black border-3 border-black text-sm py-2 px-3 font-bold uppercase transform hover:rotate-1 transition-all shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <Sparkles className="mr-1 h-4 w-4" />
+                    {isGeneratingLyrics ? "Generating..." : "Random"}
+                  </Button>
+                </div>
                 <Textarea
                   id="lyrics"
                   placeholder="Drop your bars here or let AI cook..."
